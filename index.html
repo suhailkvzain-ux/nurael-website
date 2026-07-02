@@ -13,9 +13,15 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <button class="menu-toggle" aria-label="Menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-    </button>
+    <div class="header-start">
+      <button class="menu-toggle" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <nav class="nav-links-left">
+        <a href="shop.html">Shop All</a>
+        <a href="shop.html?tag=New">New Arrivals</a>
+      </nav>
+    </div>
     <a href="index.html" class="logo"><span class="mark">N</span> Nurael<small>WEAR IT WITH PRIDE</small></a>
     <div class="header-actions">
       <a href="shop.html" class="icon-btn" aria-label="Search">
@@ -27,41 +33,10 @@
       </a>
     </div>
   </div>
-  <div class="header-subnav">
-    <div class="subnav-dropdowns">
-      <div class="dropdown">
-        <button class="dropdown-btn" type="button">Categories <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="dropdown-panel">
-          <a href="shop.html?category=Abayas">Abayas</a>
-          <a href="shop.html?category=Kaftans">Kaftans</a>
-          <a href="shop.html?category=Hijabs">Hijabs</a>
-          <a href="shop.html?category=Accessories">Accessories</a>
-        </div>
-      </div>
-      <div class="dropdown">
-        <button class="dropdown-btn" type="button">Collections <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="dropdown-panel">
-          <a href="shop.html?tag=New">New Arrivals</a>
-          <a href="shop.html?tag=Occasion">Occasion Edit</a>
-          <a href="shop.html?tag=Everyday">Everyday Essentials</a>
-          <a href="shop.html?tag=Gift">Gifting</a>
-        </div>
-      </div>
-    </div>
-    <form class="subnav-search" role="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input type="text" placeholder="Search abayas, kaftans, hijabs…" aria-label="Search">
-    </form>
-    <nav class="pill-nav">
-      <a href="shop.html?category=Abayas" class="pill-link">Abayas</a>
-      <a href="shop.html?category=Kaftans" class="pill-link">Kaftans</a>
-      <a href="shop.html?category=Hijabs" class="pill-link">Hijabs</a>
-      <a href="shop.html?category=Accessories" class="pill-link">Accessories</a>
-    </nav>
-  </div>
   <div class="mobile-nav">
     <a href="index.html">Home</a>
-    <a href="shop.html">Shop</a>
+    <a href="shop.html">Shop All</a>
+    <a href="shop.html?tag=New">New Arrivals</a>
     <a href="about.html">About</a>
     <a href="faq.html">FAQs</a>
     <a href="contact.html">Contact</a>
@@ -70,19 +45,14 @@
 </header>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-text">
-      <span class="eyebrow" id="hero-eyebrow">The Autumn Collection</span>
-      <h1 id="hero-title">Modest wear, made modern.</h1>
-      <p id="hero-subtitle">Nurael designs elevated abayas and kaftans in fine, breathable fabrics — cut for movement, finished by hand, built to last well beyond a season.</p>
-      <div class="hero-actions">
-        <a href="shop.html" class="btn btn-gold">Shop the Collection</a>
-        <a href="about.html" class="btn btn-light">Our Story</a>
-      </div>
-    </div>
-    <div class="hero-media">
-      <div class="media-frame dark" style="color:#d4b876"></div>
+<section class="hero-photo" id="site-hero">
+  <div class="hero-photo-overlay">
+    <span class="eyebrow" id="hero-eyebrow">The Autumn Collection</span>
+    <h1 id="hero-title">Modest wear, made modern.</h1>
+    <p id="hero-subtitle">Nurael designs elevated abayas and kaftans in fine, breathable fabrics — cut for movement, finished by hand, built to last well beyond a season.</p>
+    <div class="hero-actions">
+      <a href="shop.html" class="btn btn-gold">Shop the Collection</a>
+      <a href="about.html" class="btn btn-light">Our Story</a>
     </div>
   </div>
 </section>
@@ -241,9 +211,6 @@
 <script src="products-loader.js"></script>
 <script>
   loadSiteData().then(function(){
-
-  document.querySelector('.hero-media .media-frame').innerHTML =
-    '<span class="badge-corner">New Arrival</span>' + silhouette('belted') + '<span class="frame-tag">Noor Embroidered Abaya</span>';
 
   document.querySelectorAll('.split-media .media-frame')[0].innerHTML =
     silhouette('belted') + '<span class="frame-tag">Est. 2018</span>';

@@ -68,9 +68,9 @@ function applySettingsToPage(){
   if (heroTitle && s.heroTitle) heroTitle.textContent = s.heroTitle;
   if (heroSubtitle && s.heroSubtitle) heroSubtitle.textContent = s.heroSubtitle;
 
-  const heroMedia = document.querySelector(".hero-media .media-frame");
-  if (heroMedia && s.heroImage){
-    heroMedia.innerHTML = `<img src="${s.heroImage}" alt="Nurael Abaya" style="width:100%;height:100%;object-fit:cover">`;
+  const heroPhoto = document.querySelector(".hero-photo");
+  if (heroPhoto && s.heroImage){
+    heroPhoto.style.backgroundImage = `url('${s.heroImage}')`;
   }
 }
 

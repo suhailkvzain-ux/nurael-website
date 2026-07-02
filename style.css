@@ -167,9 +167,23 @@ header.site-header{
   margin: 0 auto;
   gap: 20px;
 }
-.header-inner .menu-toggle{ justify-self: start; }
+.header-inner .header-start{ justify-self: start; display: flex; align-items: center; gap: 26px; }
 .header-inner .logo{ justify-self: center; }
 .header-inner .header-actions{ justify-self: end; }
+.nav-links-left{ display: flex; align-items: center; gap: 22px; }
+.nav-links-left a{
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+.nav-links-left a:hover{ color: var(--gold); }
+@media (max-width: 900px){
+  .nav-links-left{ display: none; }
+}
 
 /* ---------- Header sub-nav: dropdowns, search, pills ---------- */
 .header-subnav{
@@ -1012,4 +1026,49 @@ footer.site-footer{
   .gallery-thumbs{ grid-template-columns: repeat(4,1fr); }
   .hero-text h1{ font-size: 32px; }
   .section-head h2{ font-size: 28px; }
+}
+
+
+/* ---------- Hero photo (full-bleed) ---------- */
+.hero-photo{
+  position: relative;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  background: url('https://images.unsplash.com/photo-1682195721373-93bf6c181938?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+  color: var(--white);
+  overflow: hidden;
+}
+.hero-photo::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(18,41,33,.62) 0%, rgba(18,41,33,.22) 55%, rgba(18,41,33,0) 100%);
+}
+.hero-photo-overlay{
+  position: relative;
+  z-index: 1;
+  max-width: 540px;
+  padding: 0 32px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: var(--container);
+}
+.hero-photo-overlay .eyebrow{ color: var(--gold-light); }
+.hero-photo-overlay h1{
+  color: var(--white);
+  font-size: 56px;
+  line-height: 1.1;
+  margin-bottom: 22px;
+  max-width: 560px;
+}
+.hero-photo-overlay p{ color: rgba(255,255,255,.85); max-width: 460px; font-size: 16px; }
+@media (max-width: 900px){
+  .hero-photo{ min-height: 520px; }
+  .hero-photo-overlay h1{ font-size: 38px; }
+}
+@media (max-width: 560px){
+  .hero-photo{ min-height: 460px; }
+  .hero-photo-overlay{ padding: 0 24px; }
+  .hero-photo-overlay h1{ font-size: 32px; }
 }
