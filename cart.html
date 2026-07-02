@@ -186,7 +186,7 @@
             <button class="btn btn-outline btn-sm" onclick="showToast('Promo code applied')">Apply</button>
           </div>
           <div class="summary-row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
-          <button class="btn btn-full" style="margin-top:20px" onclick="showToast('This is a demo store — checkout is not enabled.')">Proceed to Checkout</button>
+          <button class="btn btn-full" id="checkout-btn" style="margin-top:20px" onclick="startCheckout()">Proceed to Checkout</button>
           <a href="shop.html" class="btn btn-outline btn-full" style="margin-top:12px">Continue Shopping</a>
         </div>
       </div>`;
@@ -196,6 +196,41 @@
   renderGrid(document.getElementById('cart-related-grid'), PRODUCTS.slice(4,8));
 
   });
+
+  async function startCheckout(){
+    const cart = getCart();
+    if (!cart.length) return;
+    const items = cart.map(item => {
+      const p = getProduct(item.id);
+      return p ? { id: p.id, name: p.name, size: item.size, qty: item.qty, price: p.price } : null;
+    }).filter(Boolean);
+    if (!items.length) return;
+
+    const btn = document.getElementById('checkout-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Redirecting to secure checkout…';
+
+    try{
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items, origin: window.location.origin })
+      });
+      const data = await res.json();
+      if (data.url){
+        window.location.href = data.url;
+      } else {
+        showToast(data.error || 'Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    } catch(err){
+      showToast('Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
 </script>
 </body>
 </html>
