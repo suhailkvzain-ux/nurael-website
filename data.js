@@ -70,32 +70,30 @@ function silhouette(variant){ return SILHOUETTES[variant] || SILHOUETTES.closed;
 
 /* ---------- Countries for the localization / shipping-country picker ---------- */
 const COUNTRIES = [
-  { code: "US", name: "United States" }, { code: "CA", name: "Canada" },
-  { code: "GB", name: "United Kingdom" }, { code: "AE", name: "United Arab Emirates" },
-  { code: "SA", name: "Saudi Arabia" }, { code: "KW", name: "Kuwait" },
-  { code: "QA", name: "Qatar" }, { code: "BH", name: "Bahrain" },
-  { code: "OM", name: "Oman" }, { code: "EG", name: "Egypt" },
-  { code: "JO", name: "Jordan" }, { code: "LB", name: "Lebanon" },
-  { code: "IQ", name: "Iraq" }, { code: "MA", name: "Morocco" },
-  { code: "TN", name: "Tunisia" }, { code: "DZ", name: "Algeria" },
-  { code: "TR", name: "Turkey" }, { code: "PK", name: "Pakistan" },
-  { code: "IN", name: "India" }, { code: "BD", name: "Bangladesh" },
-  { code: "MY", name: "Malaysia" }, { code: "ID", name: "Indonesia" },
-  { code: "SG", name: "Singapore" }, { code: "AU", name: "Australia" },
-  { code: "NZ", name: "New Zealand" }, { code: "FR", name: "France" },
-  { code: "DE", name: "Germany" }, { code: "IT", name: "Italy" },
-  { code: "ES", name: "Spain" }, { code: "NL", name: "Netherlands" },
-  { code: "BE", name: "Belgium" }, { code: "SE", name: "Sweden" },
-  { code: "NO", name: "Norway" }, { code: "DK", name: "Denmark" },
-  { code: "IE", name: "Ireland" }, { code: "CH", name: "Switzerland" },
-  { code: "AT", name: "Austria" }, { code: "PT", name: "Portugal" },
-  { code: "PL", name: "Poland" }, { code: "GR", name: "Greece" },
-  { code: "ZA", name: "South Africa" }, { code: "NG", name: "Nigeria" },
-  { code: "KE", name: "Kenya" }, { code: "BR", name: "Brazil" },
-  { code: "MX", name: "Mexico" }, { code: "JP", name: "Japan" },
-  { code: "KR", name: "South Korea" }, { code: "CN", name: "China" },
-  { code: "HK", name: "Hong Kong" }
+  { code: "AE", name: "United Arab Emirates" },
+  { code: "IN", name: "India" },
+  { code: "OM", name: "Oman" },
+  { code: "QA", name: "Qatar" },
+  { code: "BH", name: "Bahrain" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "KW", name: "Kuwait" }
 ];
+const DEFAULT_COUNTRY = { code: "AE", name: "United Arab Emirates" };
+
+/* ---------- Currency conversion ----------
+   Base prices in the database are stored in AED (site's home currency).
+   Rates below convert FROM 1 AED TO the local currency. These are static
+   approximations (most Gulf currencies are USD-pegged so fairly stable;
+   INR floats and may drift over time) — update periodically as needed. */
+const CURRENCY_RATES = {
+  AE: { code: "AED", symbol: "AED", decimals: 2, rate: 1 },
+  IN: { code: "INR", symbol: "₹", decimals: 0, rate: 22.7 },
+  OM: { code: "OMR", symbol: "OMR", decimals: 3, rate: 0.105 },
+  QA: { code: "QAR", symbol: "QAR", decimals: 2, rate: 0.99 },
+  BH: { code: "BHD", symbol: "BHD", decimals: 3, rate: 0.1025 },
+  SA: { code: "SAR", symbol: "SAR", decimals: 2, rate: 1.02 },
+  KW: { code: "KWD", symbol: "KWD", decimals: 3, rate: 0.084 }
+};
 
 /* ---------- Reviews (product detail page) ---------- */
 const REVIEWS = [
@@ -132,5 +130,36 @@ const FAQS = {
     { q: "What fabrics do you use?", a: "We work primarily with nida, crepe, linen-blends, chiffon and mulberry silk — each chosen for how it drapes and breathes for everyday, year-round wear." },
     { q: "How should I care for my abaya?", a: "Care instructions are listed on every product page and garment label. Most pieces are dry clean recommended; some everyday styles are machine washable on cold." },
     { q: "Are your pieces true to size?", a: "Our pieces are cut for a relaxed, flattering fit. Refer to the size guide on each product page for exact measurements." }
+  ]
+};
+
+/* ---------- About page (fallback copy shown until you edit it in Admin > Content) ---------- */
+const DEFAULT_ABOUT_CONTENT = {
+  heroEyebrow: "Since 2018",
+  heroTitle: "Modest fashion, made modern",
+  heroSubtitle: "Nurael was founded on a simple belief — that modest wear deserves the same craft, fabric, and design attention as any luxury ready-to-wear label.",
+  storyEyebrow: "Our Beginning",
+  storyTitle: "Started at a kitchen table, stitched into a house",
+  storyText: "Nurael began in 2018 with one abaya, cut and sewn by our founder for her own wardrobe when she couldn't find pieces that felt both modest and modern. Word spread quickly among friends, then their friends — and within a year, Nurael had become a small studio with three tailors.\n\nToday we design from our studio, working with artisans across a small, trusted supply chain who've been with us since those early days. We've stayed intentionally small: every piece is still fitted, reviewed, and refined by hand before it goes into production.",
+  statYears: "7+", statYearsLabel: "Years Crafting",
+  statCountries: "40+", statCountriesLabel: "Countries Shipped",
+  statCustomers: "12k+", statCustomersLabel: "Happy Customers",
+  valuesEyebrow: "What We Stand For",
+  valuesTitle: "Craft, fabric, and quiet detail",
+  values: [
+    { title: "Considered Fabric", text: "We source crepe, nida, linen-blends and mulberry silk chosen for how they drape, breathe, and age — never for how cheaply they can be produced." },
+    { title: "Small-Batch Making", text: "Every style is produced in limited runs by artisans we've worked with for years — never mass-produced, never rushed." },
+    { title: "Fit-Tested Design", text: "Each silhouette goes through multiple fittings on real bodies before production, so what you order is what actually fits and moves well." }
+  ],
+  promiseEyebrow: "Our Promise",
+  promiseTitle: "Made to be worn for years, not seasons",
+  promiseText: "We design against trend cycles. Nurael pieces are built with finishing details — French seams, reinforced hems, colour-matched thread — meant to hold up to years of regular wear, not one.\n\nWhen you order from Nurael, your piece arrives in our signature ivory and gold packaging, gift-ready by default, with a card on caring for your fabric.",
+  timelineEyebrow: "Our Journey",
+  timelineTitle: "Milestones",
+  timeline: [
+    { year: "2018", text: "Nurael founded from a single hand-sewn abaya" },
+    { year: "2020", text: "First flagship studio opens, team grows to 12" },
+    { year: "2023", text: "Shipping expands to over 40 countries" },
+    { year: "2026", text: "12,000+ pieces worn by our community" }
   ]
 };

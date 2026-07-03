@@ -48,7 +48,19 @@ function mapSettingsRow(row){
     heroTitle: row.hero_title || "",
     heroSubtitle: row.hero_subtitle || "",
     announcementText: row.announcement_text || "",
-    freeShippingThreshold: row.free_shipping_threshold != null ? Number(row.free_shipping_threshold) : 150
+    freeShippingThreshold: row.free_shipping_threshold != null ? Number(row.free_shipping_threshold) : 150,
+    logoImage: row.logo_image || null,
+    socialInstagram: row.social_instagram || "",
+    socialPinterest: row.social_pinterest || "",
+    socialTiktok: row.social_tiktok || "",
+    footerTagline: row.footer_tagline || "",
+    contactEmail: row.contact_email || "",
+    contactPhone: row.contact_phone || "",
+    contactHours: row.contact_hours || "",
+    contactAddress: row.contact_address || "",
+    testimonials: Array.isArray(row.testimonials) && row.testimonials.length ? row.testimonials : null,
+    faqs: row.faqs && Object.keys(row.faqs).length ? row.faqs : null,
+    aboutContent: row.about_content && Object.keys(row.about_content).length ? row.about_content : null
   };
 }
 
@@ -96,6 +108,57 @@ function applySettingsToPage(){
   if (heroPhoto && s.heroImage){
     heroPhoto.style.backgroundImage = `url('${s.heroImage}')`;
   }
+
+  if (s.logoImage){
+    document.querySelectorAll("a.logo").forEach(el => {
+      el.innerHTML = `<img src="${s.logoImage}" alt="Nurael Abaya" class="logo-image">`;
+    });
+  }
+
+  const socialLinks = {
+    Instagram: s.socialInstagram,
+    Pinterest: s.socialPinterest,
+    TikTok: s.socialTiktok
+  };
+  Object.keys(socialLinks).forEach(label => {
+    const url = socialLinks[label];
+    if (url){
+      document.querySelectorAll(`.footer-social a[aria-label="${label}"]`).forEach(el => {
+        el.setAttribute("href", url);
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener");
+      });
+    }
+  });
+
+  const taglineEl = document.getElementById("footer-tagline");
+  if (taglineEl && s.footerTagline) taglineEl.textContent = s.footerTagline;
+
+  const emailEl = document.getElementById("contact-email");
+  const phoneEl = document.getElementById("contact-phone");
+  const hoursEl = document.getElementById("contact-hours");
+  const addressEl = document.getElementById("contact-address");
+  if (emailEl && s.contactEmail) emailEl.textContent = s.contactEmail;
+  if (phoneEl && s.contactPhone) phoneEl.textContent = s.contactPhone;
+  if (hoursEl && s.contactHours) hoursEl.textContent = s.contactHours;
+  if (addressEl && s.contactAddress) addressEl.textContent = s.contactAddress;
+}
+
+/* ---------- Content with admin overrides + built-in fallback defaults ---------- */
+function getTestimonials(){
+  const s = window.SITE_SETTINGS || {};
+  if (s.testimonials) return s.testimonials;
+  return (typeof TESTIMONIALS !== "undefined") ? TESTIMONIALS : [];
+}
+function getFaqs(){
+  const s = window.SITE_SETTINGS || {};
+  if (s.faqs) return s.faqs;
+  return (typeof FAQS !== "undefined") ? FAQS : {};
+}
+function getAboutContent(){
+  const s = window.SITE_SETTINGS || {};
+  if (s.aboutContent) return s.aboutContent;
+  return (typeof DEFAULT_ABOUT_CONTENT !== "undefined") ? DEFAULT_ABOUT_CONTENT : {};
 }
 
 async function loadSiteData(){
