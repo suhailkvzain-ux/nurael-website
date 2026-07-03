@@ -52,6 +52,33 @@ module.exports = async (req, res) => {
     }
   }
 
+  if (event.type === 'payment_intent.succeeded') {
+    const intent = event.data.object;
+    try {
+      const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      const meta = intent.metadata || {};
+      const cartItems = JSON.parse(meta.cart || '[]');
+      const subtotal = Number(meta.subtotal) || 0;
+      const shipping = Number(meta.shipping) || 0;
+      const total = (intent.amount_received || intent.amount || 0) / 100;
+
+      await supabase.from('orders').insert({
+        customer_email: meta.email || intent.receipt_email || null,
+        items: cartItems,
+        subtotal,
+        shipping,
+        total,
+        status: 'paid',
+        stripe_session_id: intent.id,
+        shipping_address: meta.delivery_method === 'collect'
+          ? { method: 'collect', point: meta.delivery_point }
+          : { method: 'ship', country: meta.delivery_country }
+      });
+    } catch (err) {
+      console.error('Failed to record order from payment intent', err);
+    }
+  }
+
   res.status(200).json({ received: true });
 };
 
