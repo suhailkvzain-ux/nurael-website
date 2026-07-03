@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop All — Nurael Abaya</title>
-<meta name="description" content="Shop the full Nurael Abaya collection — abayas, kaftans, hijabs and accessories in fine, breathable fabrics.">
+<title>My Account — Nurael Abaya</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -76,88 +75,46 @@
   </aside>
 </header>
 
-<div class="page-hero">
-  <span class="eyebrow">The Full Collection</span>
-  <h1 id="shop-title">Shop All</h1>
-  <p>Abayas, kaftans, hijabs and accessories — designed for everyday ease and elevated occasions alike.</p>
-</div>
-
-<div class="container">
-  <div class="breadcrumb">
-    <a href="index.html">Home</a><span class="sep">/</span><span class="current">Shop</span>
+<div class="container" style="max-width:760px;padding:60px 32px 100px">
+  <div id="account-guard" style="display:none;text-align:center;padding:60px 0">
+    <p style="margin-bottom:20px">Please sign in to view your account.</p>
+    <a href="login.html" class="btn" style="width:auto;padding:12px 30px">Sign In</a>
   </div>
 
-  <div class="shop-layout">
-    <aside>
-      <div class="filter-block">
-        <h4>Category</h4>
-        <label class="filter-check"><input type="checkbox" value="Abayas" class="f-category"> Abayas</label>
-        <label class="filter-check"><input type="checkbox" value="Kaftans" class="f-category"> Kaftans</label>
-        <label class="filter-check"><input type="checkbox" value="Hijabs" class="f-category"> Hijabs</label>
-        <label class="filter-check"><input type="checkbox" value="Accessories" class="f-category"> Accessories</label>
+  <div id="account-content" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;flex-wrap:wrap;gap:14px">
+      <div>
+        <h1 style="margin-bottom:4px" id="account-greeting">My Account</h1>
+        <p style="color:var(--grey);font-size:14px" id="account-email"></p>
       </div>
-      <div class="filter-block">
-        <h4>Size</h4>
-        <div class="size-options" id="filter-sizes">
-          <div class="size-pill" data-size="S">S</div>
-          <div class="size-pill" data-size="M">M</div>
-          <div class="size-pill" data-size="L">L</div>
-          <div class="size-pill" data-size="XL">XL</div>
-          <div class="size-pill" data-size="XXL">XXL</div>
-        </div>
-      </div>
-      <div class="filter-block">
-        <h4>Price</h4>
-        <div class="range-slider-track"><div class="range-slider-fill"></div></div>
-        <p style="font-size:13px;color:var(--grey);margin:0">$20 — $300</p>
-      </div>
-      <div class="filter-block">
-        <h4>Style</h4>
-        <label class="filter-check"><input type="checkbox" value="Everyday" class="f-tag"> Everyday</label>
-        <label class="filter-check"><input type="checkbox" value="Occasion" class="f-tag"> Occasion</label>
-        <label class="filter-check"><input type="checkbox" value="Essentials" class="f-tag"> Essentials</label>
-        <label class="filter-check"><input type="checkbox" value="Gift" class="f-tag"> Gift</label>
-        <label class="filter-check"><input type="checkbox" value="New" class="f-tag"> New</label>
-      </div>
-      <button class="btn btn-outline btn-full btn-sm" id="clear-filters">Clear Filters</button>
-    </aside>
+      <button type="button" id="signout-btn" class="btn btn-outline" style="width:auto;padding:10px 22px">Sign Out</button>
+    </div>
 
-    <div>
-      <div class="shop-toolbar">
-        <span class="results-count" id="results-count">12 results</span>
-        <select id="sort-select">
-          <option value="featured">Sort: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-      </div>
-      <div class="product-grid" id="shop-grid"></div>
+    <div class="locale-tabs" style="border-top:1px solid var(--line);margin-bottom:26px">
+      <button class="locale-tab active" data-account-tab="orders">Orders</button>
+      <button class="locale-tab" data-account-tab="loyalty">Loyalty Hub</button>
+      <button class="locale-tab" data-account-tab="profile">Profile</button>
     </div>
-  </div>
-</div>
 
-<div class="trust-bar">
-  <div class="trust-bar-inner">
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6"/><path d="M12 3v13m0 0l-4-4m4 4l4-4"/></svg>
-      <strong>Free Delivery</strong>
-      <span>Free standard shipping over $150</span>
+    <div id="account-panel-orders" class="account-panel">
+      <div id="orders-list">
+        <p style="color:var(--grey)">Loading your orders…</p>
+      </div>
     </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l4-8h10l4 8"/><path d="M3 12v6a2 2 0 002 2h14a2 2 0 002-2v-6"/></svg>
-      <strong>14-Day Returns</strong>
-      <span>Easy returns on ready-to-wear</span>
+
+    <div id="account-panel-loyalty" class="account-panel" style="display:none">
+      <div style="border:1px solid var(--line);border-radius:12px;padding:40px 30px;text-align:center">
+        <h3 style="margin-bottom:10px">Loyalty Hub is coming soon</h3>
+        <p style="color:var(--grey);max-width:420px;margin:0 auto">We're building a rewards program for Nurael customers. Check back here once it launches — you'll be able to see it as soon as it's live.</p>
+      </div>
     </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-      <strong>Secure Payment</strong>
-      <span>Cards and secure checkout</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6z"/></svg>
-      <strong>Quality Guaranteed</strong>
-      <span>Fine fabrics, finished by hand</span>
+
+    <div id="account-panel-profile" class="account-panel" style="display:none">
+      <div style="border:1px solid var(--line);border-radius:12px;padding:30px">
+        <p style="margin-bottom:10px"><strong>Email:</strong> <span id="profile-email"></span></p>
+        <p style="margin-bottom:10px"><strong>Member since:</strong> <span id="profile-since"></span></p>
+        <p style="color:var(--grey);font-size:13px;margin-top:20px">To change your password, use "Forgot your password?" on the sign-in page.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -204,7 +161,7 @@
         <ul>
           <li><a href="cart.html">Cart</a></li>
           <li><a href="contact.html">Support</a></li>
-          <li><a href="faq.html#orders">Orders</a></li>
+          <li><a href="account.html">My Account</a></li>
         </ul>
       </div>
     </div>
@@ -223,74 +180,64 @@
 <script src="config.js"></script>
 <script src="products-loader.js"></script>
 <script>
-  loadSiteData().then(function(){
+  loadSiteData();
 
-  const params = new URLSearchParams(window.location.search);
-  const initialCategory = params.get('category');
-  const initialTag = params.get('tag');
-  const initialQuery = params.get('q') || '';
-
-  if (initialCategory){
-    document.getElementById('shop-title').textContent = initialCategory;
-    const cb = document.querySelector(`.f-category[value="${initialCategory}"]`);
-    if (cb) cb.checked = true;
-    document.querySelectorAll('.pill-link').forEach(p => {
-      if (p.getAttribute('href') === `shop.html?category=${initialCategory}`) p.classList.add('active');
-    });
+  function activateAccountTab(name){
+    document.querySelectorAll('[data-account-tab]').forEach(t => t.classList.toggle('active', t.getAttribute('data-account-tab') === name));
+    document.querySelectorAll('.account-panel').forEach(p => p.style.display = 'none');
+    const panel = document.getElementById('account-panel-' + name);
+    if (panel) panel.style.display = '';
   }
-  if (initialTag){
-    const cb = document.querySelector(`.f-tag[value="${initialTag}"]`);
-    if (cb) cb.checked = true;
-  }
-  if (initialQuery){
-    document.getElementById('shop-title').textContent = `Results for "${initialQuery}"`;
-    const searchInput = document.getElementById('header-search-input');
-    if (searchInput) searchInput.value = initialQuery;
+  document.querySelectorAll('[data-account-tab]').forEach(tab => {
+    tab.addEventListener('click', () => activateAccountTab(tab.getAttribute('data-account-tab')));
+  });
+  const requestedTab = new URLSearchParams(window.location.search).get('tab');
+  if (requestedTab) activateAccountTab(requestedTab);
+
+  function renderOrders(orders){
+    const list = document.getElementById('orders-list');
+    if (!orders || !orders.length){
+      list.innerHTML = `<div style="text-align:center;padding:50px 0;border:1px solid var(--line);border-radius:12px">
+        <p style="margin-bottom:16px;color:var(--grey)">You haven't placed any orders yet.</p>
+        <a href="shop.html" class="btn" style="width:auto;padding:10px 26px">Start Shopping</a>
+      </div>`;
+      return;
+    }
+    list.innerHTML = orders.map(o => {
+      const date = new Date(o.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      const itemCount = Array.isArray(o.items) ? o.items.reduce((s,i) => s + (Number(i.qty)||1), 0) : 0;
+      return `<div style="border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <strong>Order placed ${date}</strong><br>
+          <span style="color:var(--grey);font-size:13px">${itemCount} item${itemCount === 1 ? '' : 's'} &middot; ${o.status}</span>
+        </div>
+        <div style="font-weight:600">$${Number(o.total).toFixed(2)}</div>
+      </div>`;
+    }).join('');
   }
 
-  let activeSizes = new Set();
+  sb.auth.getSession().then(async ({ data }) => {
+    const session = data.session;
+    if (!session){
+      document.getElementById('account-guard').style.display = '';
+      return;
+    }
+    document.getElementById('account-content').style.display = '';
+    const user = session.user;
+    const name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || user.email;
+    document.getElementById('account-greeting').textContent = `Hi, ${name}`;
+    document.getElementById('account-email').textContent = user.email;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('profile-since').textContent = new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 
-  document.querySelectorAll('#filter-sizes .size-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      pill.classList.toggle('active');
-      const s = pill.dataset.size;
-      activeSizes.has(s) ? activeSizes.delete(s) : activeSizes.add(s);
-      applyFilters();
-    });
+    const { data: orders, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
+    if (error){ console.error(error); }
+    renderOrders(orders);
   });
 
-  document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.addEventListener('change', applyFilters));
-  document.getElementById('sort-select').addEventListener('change', applyFilters);
-  document.getElementById('clear-filters').addEventListener('click', () => {
-    document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.checked = false);
-    document.querySelectorAll('#filter-sizes .size-pill').forEach(p => p.classList.remove('active'));
-    activeSizes.clear();
-    document.getElementById('shop-title').textContent = 'Shop All';
-    applyFilters();
-  });
-
-  function applyFilters(){
-    const categories = [...document.querySelectorAll('.f-category:checked')].map(c => c.value);
-    const tags = [...document.querySelectorAll('.f-tag:checked')].map(c => c.value);
-    const q = initialQuery.trim().toLowerCase();
-    let results = PRODUCTS.filter(p => {
-      const catMatch = categories.length === 0 || categories.includes(p.category);
-      const tagMatch = tags.length === 0 || tags.includes(p.tag);
-      const qMatch = !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.tag.toLowerCase().includes(q);
-      return catMatch && tagMatch && qMatch;
-    });
-
-    const sort = document.getElementById('sort-select').value;
-    if (sort === 'price-asc') results.sort((a,b) => a.price - b.price);
-    if (sort === 'price-desc') results.sort((a,b) => b.price - a.price);
-    if (sort === 'rating') results.sort((a,b) => b.rating - a.rating);
-
-    document.getElementById('results-count').textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
-    renderGrid(document.getElementById('shop-grid'), results);
-  }
-
-  applyFilters();
-
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    window.location.href = 'index.html';
   });
 </script>
 <div class="locale-modal-overlay"></div>

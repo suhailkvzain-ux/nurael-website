@@ -68,6 +68,35 @@ const SILHOUETTES = {
 
 function silhouette(variant){ return SILHOUETTES[variant] || SILHOUETTES.closed; }
 
+/* ---------- Countries for the localization / shipping-country picker ---------- */
+const COUNTRIES = [
+  { code: "US", name: "United States" }, { code: "CA", name: "Canada" },
+  { code: "GB", name: "United Kingdom" }, { code: "AE", name: "United Arab Emirates" },
+  { code: "SA", name: "Saudi Arabia" }, { code: "KW", name: "Kuwait" },
+  { code: "QA", name: "Qatar" }, { code: "BH", name: "Bahrain" },
+  { code: "OM", name: "Oman" }, { code: "EG", name: "Egypt" },
+  { code: "JO", name: "Jordan" }, { code: "LB", name: "Lebanon" },
+  { code: "IQ", name: "Iraq" }, { code: "MA", name: "Morocco" },
+  { code: "TN", name: "Tunisia" }, { code: "DZ", name: "Algeria" },
+  { code: "TR", name: "Turkey" }, { code: "PK", name: "Pakistan" },
+  { code: "IN", name: "India" }, { code: "BD", name: "Bangladesh" },
+  { code: "MY", name: "Malaysia" }, { code: "ID", name: "Indonesia" },
+  { code: "SG", name: "Singapore" }, { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" }, { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" }, { code: "IT", name: "Italy" },
+  { code: "ES", name: "Spain" }, { code: "NL", name: "Netherlands" },
+  { code: "BE", name: "Belgium" }, { code: "SE", name: "Sweden" },
+  { code: "NO", name: "Norway" }, { code: "DK", name: "Denmark" },
+  { code: "IE", name: "Ireland" }, { code: "CH", name: "Switzerland" },
+  { code: "AT", name: "Austria" }, { code: "PT", name: "Portugal" },
+  { code: "PL", name: "Poland" }, { code: "GR", name: "Greece" },
+  { code: "ZA", name: "South Africa" }, { code: "NG", name: "Nigeria" },
+  { code: "KE", name: "Kenya" }, { code: "BR", name: "Brazil" },
+  { code: "MX", name: "Mexico" }, { code: "JP", name: "Japan" },
+  { code: "KR", name: "South Korea" }, { code: "CN", name: "China" },
+  { code: "HK", name: "Hong Kong" }
+];
+
 /* ---------- Reviews (product detail page) ---------- */
 const REVIEWS = [
   { name: "Amina R.", initial: "A", date: "18 Jun 2026", rating: 5, quote: "Nurael's dedication to fine fabric and quiet detail resonates strongly — this abaya moves beautifully and the fit is exactly true to size. It's become the piece I reach for most." },

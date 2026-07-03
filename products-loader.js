@@ -33,7 +33,10 @@ function mapProductRow(row){
     gallery: row.gallery || [],
     featured: !!row.featured,
     description: row.description || "",
-    details: row.details || []
+    details: row.details || [],
+    fabricNote: row.fabric_note || "",
+    designNote: row.design_note || "",
+    cutNote: row.cut_note || ""
   };
 }
 
@@ -44,8 +47,29 @@ function mapSettingsRow(row){
     heroEyebrow: row.hero_eyebrow || "",
     heroTitle: row.hero_title || "",
     heroSubtitle: row.hero_subtitle || "",
-    announcementText: row.announcement_text || ""
+    announcementText: row.announcement_text || "",
+    freeShippingThreshold: row.free_shipping_threshold != null ? Number(row.free_shipping_threshold) : 150
   };
+}
+
+window.SHIPPING_RATES = [];
+window.COLLECTION_POINTS = [];
+async function loadShippingData(){
+  try{
+    const [{ data: rates }, { data: points }] = await Promise.all([
+      sb.from("shipping_rates").select("*").order("country_name", { ascending: true }),
+      sb.from("collection_points").select("*").eq("active", true).order("sort_order", { ascending: true })
+    ]);
+    window.SHIPPING_RATES = rates || [];
+    window.COLLECTION_POINTS = points || [];
+  } catch(err){
+    console.error("Failed to load shipping data", err);
+  }
+  return { rates: window.SHIPPING_RATES, points: window.COLLECTION_POINTS };
+}
+function getShippingRate(countryCode){
+  const row = window.SHIPPING_RATES.find(r => r.country_code === countryCode);
+  return row ? Number(row.rate) : null;
 }
 
 function applySettingsToPage(){
@@ -90,5 +114,6 @@ async function loadSiteData(){
     window.SITE_SETTINGS = {};
   }
   applySettingsToPage();
+  if (typeof renderCartDrawer === "function") renderCartDrawer();
   return { products: window.PRODUCTS, settings: window.SITE_SETTINGS };
 }

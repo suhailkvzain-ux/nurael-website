@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop All — Nurael Abaya</title>
-<meta name="description" content="Shop the full Nurael Abaya collection — abayas, kaftans, hijabs and accessories in fine, breathable fabrics.">
+<title>Login — Nurael Abaya</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -76,90 +75,41 @@
   </aside>
 </header>
 
-<div class="page-hero">
-  <span class="eyebrow">The Full Collection</span>
-  <h1 id="shop-title">Shop All</h1>
-  <p>Abayas, kaftans, hijabs and accessories — designed for everyday ease and elevated occasions alike.</p>
-</div>
+<div class="container" style="max-width:460px;padding:80px 32px 100px">
+  <h1 style="text-align:center;margin-bottom:30px">Sign in or create an account</h1>
 
-<div class="container">
-  <div class="breadcrumb">
-    <a href="index.html">Home</a><span class="sep">/</span><span class="current">Shop</span>
+  <button type="button" id="google-signin-btn" class="btn btn-outline btn-full" style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.61z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.9v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.66 9c0-.59.1-1.17.28-1.7V4.97H.9A9 9 0 0 0 0 9c0 1.45.35 2.83.9 4.03l3.05-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .9 4.97L3.95 7.3C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+    Continue with Google
+  </button>
+  <div style="text-align:center;color:var(--grey);font-size:13px;margin:0 0 20px;position:relative">
+    <span style="background:var(--ivory);padding:0 12px;position:relative;z-index:1">OR</span>
+    <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line);z-index:0"></div>
   </div>
 
-  <div class="shop-layout">
-    <aside>
-      <div class="filter-block">
-        <h4>Category</h4>
-        <label class="filter-check"><input type="checkbox" value="Abayas" class="f-category"> Abayas</label>
-        <label class="filter-check"><input type="checkbox" value="Kaftans" class="f-category"> Kaftans</label>
-        <label class="filter-check"><input type="checkbox" value="Hijabs" class="f-category"> Hijabs</label>
-        <label class="filter-check"><input type="checkbox" value="Accessories" class="f-category"> Accessories</label>
+  <form id="login-form">
+    <div class="field" style="margin-bottom:18px">
+      <label style="display:block;font-weight:600;font-size:13px;margin-bottom:6px">Email</label>
+      <input id="login-email" type="email" required style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--sand)">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <label style="font-weight:600;font-size:13px">Password</label>
+        <a href="#" id="forgot-password-link" style="font-size:13px;text-decoration:underline;color:var(--ink)">Forgot your password?</a>
       </div>
-      <div class="filter-block">
-        <h4>Size</h4>
-        <div class="size-options" id="filter-sizes">
-          <div class="size-pill" data-size="S">S</div>
-          <div class="size-pill" data-size="M">M</div>
-          <div class="size-pill" data-size="L">L</div>
-          <div class="size-pill" data-size="XL">XL</div>
-          <div class="size-pill" data-size="XXL">XXL</div>
-        </div>
-      </div>
-      <div class="filter-block">
-        <h4>Price</h4>
-        <div class="range-slider-track"><div class="range-slider-fill"></div></div>
-        <p style="font-size:13px;color:var(--grey);margin:0">$20 — $300</p>
-      </div>
-      <div class="filter-block">
-        <h4>Style</h4>
-        <label class="filter-check"><input type="checkbox" value="Everyday" class="f-tag"> Everyday</label>
-        <label class="filter-check"><input type="checkbox" value="Occasion" class="f-tag"> Occasion</label>
-        <label class="filter-check"><input type="checkbox" value="Essentials" class="f-tag"> Essentials</label>
-        <label class="filter-check"><input type="checkbox" value="Gift" class="f-tag"> Gift</label>
-        <label class="filter-check"><input type="checkbox" value="New" class="f-tag"> New</label>
-      </div>
-      <button class="btn btn-outline btn-full btn-sm" id="clear-filters">Clear Filters</button>
-    </aside>
+      <input id="login-password" type="password" required minlength="6" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--sand)">
+    </div>
+    <button type="submit" data-action="signin" class="btn btn-full" style="margin-top:20px">Sign In</button>
+    <div style="text-align:center;color:var(--grey);font-size:13px;margin:20px 0;position:relative">
+      <span style="background:var(--ivory);padding:0 12px;position:relative;z-index:1">or</span>
+      <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--line);z-index:0"></div>
+    </div>
+    <button type="submit" data-action="signup" class="btn btn-outline btn-full">Create Account</button>
+  </form>
 
-    <div>
-      <div class="shop-toolbar">
-        <span class="results-count" id="results-count">12 results</span>
-        <select id="sort-select">
-          <option value="featured">Sort: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-      </div>
-      <div class="product-grid" id="shop-grid"></div>
-    </div>
-  </div>
-</div>
-
-<div class="trust-bar">
-  <div class="trust-bar-inner">
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6"/><path d="M12 3v13m0 0l-4-4m4 4l4-4"/></svg>
-      <strong>Free Delivery</strong>
-      <span>Free standard shipping over $150</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l4-8h10l4 8"/><path d="M3 12v6a2 2 0 002 2h14a2 2 0 002-2v-6"/></svg>
-      <strong>14-Day Returns</strong>
-      <span>Easy returns on ready-to-wear</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-      <strong>Secure Payment</strong>
-      <span>Cards and secure checkout</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6z"/></svg>
-      <strong>Quality Guaranteed</strong>
-      <span>Fine fabrics, finished by hand</span>
-    </div>
-  </div>
+  <p style="text-align:center;color:var(--grey);font-size:12px;margin-top:30px">
+    Trouble signing in? <a href="contact.html" style="text-decoration:underline;color:var(--ink)">Contact support</a>.
+  </p>
 </div>
 
 <footer class="site-footer">
@@ -223,74 +173,64 @@
 <script src="config.js"></script>
 <script src="products-loader.js"></script>
 <script>
-  loadSiteData().then(function(){
+  loadSiteData();
 
-  const params = new URLSearchParams(window.location.search);
-  const initialCategory = params.get('category');
-  const initialTag = params.get('tag');
-  const initialQuery = params.get('q') || '';
+  const loginForm = document.getElementById('login-form');
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const googleBtn = document.getElementById('google-signin-btn');
+  const forgotLink = document.getElementById('forgot-password-link');
 
-  if (initialCategory){
-    document.getElementById('shop-title').textContent = initialCategory;
-    const cb = document.querySelector(`.f-category[value="${initialCategory}"]`);
-    if (cb) cb.checked = true;
-    document.querySelectorAll('.pill-link').forEach(p => {
-      if (p.getAttribute('href') === `shop.html?category=${initialCategory}`) p.classList.add('active');
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitter = e.submitter;
+      const action = submitter ? submitter.getAttribute('data-action') : 'signin';
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      if (!email || !password) return;
+      const originalText = submitter.textContent;
+      submitter.disabled = true;
+      submitter.textContent = 'Please wait…';
+      try {
+        const result = action === 'signup'
+          ? await sb.auth.signUp({ email, password })
+          : await sb.auth.signInWithPassword({ email, password });
+        if (result.error) {
+          showToast(result.error.message);
+        } else if (action === 'signup' && !result.data.session) {
+          showToast('Check your email to confirm your account.');
+        } else {
+          showToast('Signed in. Welcome back!');
+          window.location.href = 'account.html';
+        }
+      } catch (err) {
+        showToast('Something went wrong. Please try again.');
+      } finally {
+        submitter.disabled = false;
+        submitter.textContent = originalText;
+      }
     });
   }
-  if (initialTag){
-    const cb = document.querySelector(`.f-tag[value="${initialTag}"]`);
-    if (cb) cb.checked = true;
-  }
-  if (initialQuery){
-    document.getElementById('shop-title').textContent = `Results for "${initialQuery}"`;
-    const searchInput = document.getElementById('header-search-input');
-    if (searchInput) searchInput.value = initialQuery;
-  }
 
-  let activeSizes = new Set();
-
-  document.querySelectorAll('#filter-sizes .size-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      pill.classList.toggle('active');
-      const s = pill.dataset.size;
-      activeSizes.has(s) ? activeSizes.delete(s) : activeSizes.add(s);
-      applyFilters();
+  if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+      await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/account.html' } });
     });
-  });
-
-  document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.addEventListener('change', applyFilters));
-  document.getElementById('sort-select').addEventListener('change', applyFilters);
-  document.getElementById('clear-filters').addEventListener('click', () => {
-    document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.checked = false);
-    document.querySelectorAll('#filter-sizes .size-pill').forEach(p => p.classList.remove('active'));
-    activeSizes.clear();
-    document.getElementById('shop-title').textContent = 'Shop All';
-    applyFilters();
-  });
-
-  function applyFilters(){
-    const categories = [...document.querySelectorAll('.f-category:checked')].map(c => c.value);
-    const tags = [...document.querySelectorAll('.f-tag:checked')].map(c => c.value);
-    const q = initialQuery.trim().toLowerCase();
-    let results = PRODUCTS.filter(p => {
-      const catMatch = categories.length === 0 || categories.includes(p.category);
-      const tagMatch = tags.length === 0 || tags.includes(p.tag);
-      const qMatch = !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.tag.toLowerCase().includes(q);
-      return catMatch && tagMatch && qMatch;
-    });
-
-    const sort = document.getElementById('sort-select').value;
-    if (sort === 'price-asc') results.sort((a,b) => a.price - b.price);
-    if (sort === 'price-desc') results.sort((a,b) => b.price - a.price);
-    if (sort === 'rating') results.sort((a,b) => b.rating - a.rating);
-
-    document.getElementById('results-count').textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
-    renderGrid(document.getElementById('shop-grid'), results);
   }
 
-  applyFilters();
+  if (forgotLink) {
+    forgotLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      if (!email) { showToast('Enter your email above first.'); return; }
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' });
+      showToast(error ? error.message : 'Password reset email sent — check your inbox.');
+    });
+  }
 
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.href = 'account.html';
   });
 </script>
 <div class="locale-modal-overlay"></div>

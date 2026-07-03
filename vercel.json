@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/abaya/:slug", "destination": "/product.html" },
+    { "source": "/kaftan/:slug", "destination": "/product.html" },
+    { "source": "/hijab/:slug", "destination": "/product.html" },
+    { "source": "/accessory/:slug", "destination": "/product.html" }
+  ]
+}

@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop All — Nurael Abaya</title>
-<meta name="description" content="Shop the full Nurael Abaya collection — abayas, kaftans, hijabs and accessories in fine, breathable fabrics.">
+<title>Checkout — Nurael Abaya</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -76,88 +76,51 @@
   </aside>
 </header>
 
-<div class="page-hero">
-  <span class="eyebrow">The Full Collection</span>
-  <h1 id="shop-title">Shop All</h1>
-  <p>Abayas, kaftans, hijabs and accessories — designed for everyday ease and elevated occasions alike.</p>
-</div>
-
-<div class="container">
-  <div class="breadcrumb">
-    <a href="index.html">Home</a><span class="sep">/</span><span class="current">Shop</span>
+<div class="container" style="max-width:1100px;padding:50px 32px 100px">
+  <div id="checkout-empty" style="display:none;text-align:center;padding:80px 0">
+    <p style="margin-bottom:20px">Your cart is empty.</p>
+    <a href="shop.html" class="btn" style="width:auto;padding:12px 30px">Continue Shopping</a>
   </div>
 
-  <div class="shop-layout">
-    <aside>
-      <div class="filter-block">
-        <h4>Category</h4>
-        <label class="filter-check"><input type="checkbox" value="Abayas" class="f-category"> Abayas</label>
-        <label class="filter-check"><input type="checkbox" value="Kaftans" class="f-category"> Kaftans</label>
-        <label class="filter-check"><input type="checkbox" value="Hijabs" class="f-category"> Hijabs</label>
-        <label class="filter-check"><input type="checkbox" value="Accessories" class="f-category"> Accessories</label>
+  <div id="checkout-content" style="display:none">
+    <h1 style="margin-bottom:30px;font-size:26px">Checkout</h1>
+    <div class="checkout-layout" style="display:grid;grid-template-columns:1.3fr 1fr;gap:50px;align-items:start">
+      <div>
+        <section style="margin-bottom:30px">
+          <h3 style="margin-bottom:14px;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Contact</h3>
+          <input type="email" id="checkout-email" placeholder="Email address" required
+                 style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--sand)">
+        </section>
+
+        <section style="margin-bottom:30px;border-top:1px solid var(--line);padding-top:26px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h3 style="font-size:15px;text-transform:uppercase;letter-spacing:.06em">Delivery</h3>
+            <a href="cart.html" style="font-size:13px;text-decoration:underline;color:var(--ink)">Change</a>
+          </div>
+          <div id="delivery-summary" style="border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-size:14px;color:var(--black)"></div>
+        </section>
+
+        <section style="border-top:1px solid var(--line);padding-top:26px">
+          <h3 style="margin-bottom:14px;font-size:15px;text-transform:uppercase;letter-spacing:.06em">Payment</h3>
+          <div id="payment-element" style="margin-bottom:16px"></div>
+          <div id="payment-message" style="color:#b23b3b;font-size:13px;margin-bottom:14px;display:none"></div>
+          <button type="button" id="pay-btn" class="btn btn-full" disabled>Pay now</button>
+          <p style="font-size:12px;color:var(--grey);margin-top:14px;display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Payments are processed securely by Stripe.
+          </p>
+        </section>
       </div>
-      <div class="filter-block">
-        <h4>Size</h4>
-        <div class="size-options" id="filter-sizes">
-          <div class="size-pill" data-size="S">S</div>
-          <div class="size-pill" data-size="M">M</div>
-          <div class="size-pill" data-size="L">L</div>
-          <div class="size-pill" data-size="XL">XL</div>
-          <div class="size-pill" data-size="XXL">XXL</div>
+
+      <div class="summary-card" style="border:1px solid var(--line);border-radius:12px;padding:26px">
+        <h3 style="margin-bottom:20px">Order Summary</h3>
+        <div id="checkout-items"></div>
+        <div style="border-top:1px solid var(--line);margin-top:16px;padding-top:16px">
+          <div class="summary-row" style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Subtotal</span><span id="checkout-subtotal"></span></div>
+          <div class="summary-row" style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Shipping</span><span id="checkout-shipping"></span></div>
+          <div class="summary-row total" style="display:flex;justify-content:space-between;font-weight:700;font-size:17px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><span>Total</span><span id="checkout-total"></span></div>
         </div>
       </div>
-      <div class="filter-block">
-        <h4>Price</h4>
-        <div class="range-slider-track"><div class="range-slider-fill"></div></div>
-        <p style="font-size:13px;color:var(--grey);margin:0">$20 — $300</p>
-      </div>
-      <div class="filter-block">
-        <h4>Style</h4>
-        <label class="filter-check"><input type="checkbox" value="Everyday" class="f-tag"> Everyday</label>
-        <label class="filter-check"><input type="checkbox" value="Occasion" class="f-tag"> Occasion</label>
-        <label class="filter-check"><input type="checkbox" value="Essentials" class="f-tag"> Essentials</label>
-        <label class="filter-check"><input type="checkbox" value="Gift" class="f-tag"> Gift</label>
-        <label class="filter-check"><input type="checkbox" value="New" class="f-tag"> New</label>
-      </div>
-      <button class="btn btn-outline btn-full btn-sm" id="clear-filters">Clear Filters</button>
-    </aside>
-
-    <div>
-      <div class="shop-toolbar">
-        <span class="results-count" id="results-count">12 results</span>
-        <select id="sort-select">
-          <option value="featured">Sort: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
-      </div>
-      <div class="product-grid" id="shop-grid"></div>
-    </div>
-  </div>
-</div>
-
-<div class="trust-bar">
-  <div class="trust-bar-inner">
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6"/><path d="M12 3v13m0 0l-4-4m4 4l4-4"/></svg>
-      <strong>Free Delivery</strong>
-      <span>Free standard shipping over $150</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l4-8h10l4 8"/><path d="M3 12v6a2 2 0 002 2h14a2 2 0 002-2v-6"/></svg>
-      <strong>14-Day Returns</strong>
-      <span>Easy returns on ready-to-wear</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-      <strong>Secure Payment</strong>
-      <span>Cards and secure checkout</span>
-    </div>
-    <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 16l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6z"/></svg>
-      <strong>Quality Guaranteed</strong>
-      <span>Fine fabrics, finished by hand</span>
     </div>
   </div>
 </div>
@@ -204,7 +167,7 @@
         <ul>
           <li><a href="cart.html">Cart</a></li>
           <li><a href="contact.html">Support</a></li>
-          <li><a href="faq.html#orders">Orders</a></li>
+          <li><a href="account.html">My Account</a></li>
         </ul>
       </div>
     </div>
@@ -223,75 +186,104 @@
 <script src="config.js"></script>
 <script src="products-loader.js"></script>
 <script>
-  loadSiteData().then(function(){
+  loadSiteData();
 
-  const params = new URLSearchParams(window.location.search);
-  const initialCategory = params.get('category');
-  const initialTag = params.get('tag');
-  const initialQuery = params.get('q') || '';
+  const draft = JSON.parse(localStorage.getItem('nurael_checkout_draft') || 'null');
 
-  if (initialCategory){
-    document.getElementById('shop-title').textContent = initialCategory;
-    const cb = document.querySelector(`.f-category[value="${initialCategory}"]`);
-    if (cb) cb.checked = true;
-    document.querySelectorAll('.pill-link').forEach(p => {
-      if (p.getAttribute('href') === `shop.html?category=${initialCategory}`) p.classList.add('active');
+  if (!draft || !draft.items || !draft.items.length){
+    document.getElementById('checkout-empty').style.display = '';
+  } else {
+    document.getElementById('checkout-content').style.display = '';
+    renderSummary(draft);
+    renderDeliverySummary(draft.delivery);
+    prefillEmail();
+    initStripePayment(draft);
+  }
+
+  function renderSummary(d){
+    const itemsEl = document.getElementById('checkout-items');
+    itemsEl.innerHTML = d.items.map(i => `
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;margin-bottom:10px">
+        <span>${i.name} <span style="color:var(--grey)">&times;${i.qty}</span> ${i.size ? `<span style="color:var(--grey)">(${i.size})</span>` : ''}</span>
+        <span>$${(i.price * i.qty).toFixed(2)}</span>
+      </div>`).join('');
+    const subtotal = d.items.reduce((s,i) => s + i.price * i.qty, 0);
+    const shipping = Number(d.shippingAmount) || 0;
+    document.getElementById('checkout-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+    document.getElementById('checkout-shipping').textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
+    document.getElementById('checkout-total').textContent = `$${(subtotal + shipping).toFixed(2)}`;
+  }
+
+  function renderDeliverySummary(delivery){
+    const el = document.getElementById('delivery-summary');
+    if (!delivery){ el.textContent = 'No delivery method selected.'; return; }
+    if (delivery.method === 'collect'){
+      el.innerHTML = `<strong>Free collection</strong><br>${delivery.pointName || 'Metro station'}`;
+    } else {
+      el.innerHTML = `<strong>Ship to address</strong><br>${delivery.countryName || delivery.countryCode || 'Country not selected'}<br><span style="color:var(--grey);font-size:13px">You'll enter your full address on the next step with Stripe.</span>`;
+    }
+  }
+
+  async function prefillEmail(){
+    if (typeof sb === 'undefined') return;
+    const { data } = await sb.auth.getSession();
+    if (data.session) document.getElementById('checkout-email').value = data.session.user.email;
+  }
+
+  async function initStripePayment(d){
+    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+    const payBtn = document.getElementById('pay-btn');
+    const msgEl = document.getElementById('payment-message');
+    let elements;
+
+    async function createIntent(){
+      const email = document.getElementById('checkout-email').value.trim();
+      const res = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: d.items, shippingAmount: d.shippingAmount, delivery: d.delivery, email })
+      });
+      const data = await res.json();
+      if (!data.clientSecret){ throw new Error(data.error || 'Could not start payment.'); }
+      return data.clientSecret;
+    }
+
+    try{
+      const clientSecret = await createIntent();
+      elements = stripe.elements({ clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: '#122921' } } });
+      const paymentElement = elements.create('payment');
+      paymentElement.mount('#payment-element');
+      payBtn.disabled = false;
+    } catch(err){
+      msgEl.textContent = err.message || 'Could not load payment form.';
+      msgEl.style.display = '';
+      return;
+    }
+
+    payBtn.addEventListener('click', async () => {
+      const email = document.getElementById('checkout-email').value.trim();
+      if (!email){ msgEl.textContent = 'Please enter your email.'; msgEl.style.display = ''; return; }
+      msgEl.style.display = 'none';
+      payBtn.disabled = true;
+      payBtn.textContent = 'Processing…';
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin + '/order-success.html',
+          receipt_email: email
+        }
+      });
+
+      if (error){
+        msgEl.textContent = error.message || 'Payment failed. Please try again.';
+        msgEl.style.display = '';
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay now';
+      }
+      // On success, Stripe redirects the browser to return_url automatically.
     });
   }
-  if (initialTag){
-    const cb = document.querySelector(`.f-tag[value="${initialTag}"]`);
-    if (cb) cb.checked = true;
-  }
-  if (initialQuery){
-    document.getElementById('shop-title').textContent = `Results for "${initialQuery}"`;
-    const searchInput = document.getElementById('header-search-input');
-    if (searchInput) searchInput.value = initialQuery;
-  }
-
-  let activeSizes = new Set();
-
-  document.querySelectorAll('#filter-sizes .size-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      pill.classList.toggle('active');
-      const s = pill.dataset.size;
-      activeSizes.has(s) ? activeSizes.delete(s) : activeSizes.add(s);
-      applyFilters();
-    });
-  });
-
-  document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.addEventListener('change', applyFilters));
-  document.getElementById('sort-select').addEventListener('change', applyFilters);
-  document.getElementById('clear-filters').addEventListener('click', () => {
-    document.querySelectorAll('.f-category, .f-tag').forEach(cb => cb.checked = false);
-    document.querySelectorAll('#filter-sizes .size-pill').forEach(p => p.classList.remove('active'));
-    activeSizes.clear();
-    document.getElementById('shop-title').textContent = 'Shop All';
-    applyFilters();
-  });
-
-  function applyFilters(){
-    const categories = [...document.querySelectorAll('.f-category:checked')].map(c => c.value);
-    const tags = [...document.querySelectorAll('.f-tag:checked')].map(c => c.value);
-    const q = initialQuery.trim().toLowerCase();
-    let results = PRODUCTS.filter(p => {
-      const catMatch = categories.length === 0 || categories.includes(p.category);
-      const tagMatch = tags.length === 0 || tags.includes(p.tag);
-      const qMatch = !q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.tag.toLowerCase().includes(q);
-      return catMatch && tagMatch && qMatch;
-    });
-
-    const sort = document.getElementById('sort-select').value;
-    if (sort === 'price-asc') results.sort((a,b) => a.price - b.price);
-    if (sort === 'price-desc') results.sort((a,b) => b.price - a.price);
-    if (sort === 'rating') results.sort((a,b) => b.rating - a.rating);
-
-    document.getElementById('results-count').textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
-    renderGrid(document.getElementById('shop-grid'), results);
-  }
-
-  applyFilters();
-
-  });
 </script>
 <div class="locale-modal-overlay"></div>
 <div class="locale-modal">
