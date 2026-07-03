@@ -7,6 +7,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let PRODUCTS = [];
 let SETTINGS = {};
 let editingProductId = null;
+let TESTIMONIALS_ADMIN = [];
+let FAQS_ADMIN = {};
 
 /* ---------- DB row <-> app object mapping ---------- */
 function mapProductRow(row){
@@ -20,7 +22,8 @@ function mapProductRow(row){
     colors: row.colors || [], colorNames: row.color_names || [],
     silhouette: row.silhouette || "closed", tone: row.tone || "dark",
     image: row.image || null, gallery: row.gallery || [],
-    featured: !!row.featured, description: row.description || "", details: row.details || []
+    featured: !!row.featured, description: row.description || "", details: row.details || [],
+    fabricNote: row.fabric_note || "", designNote: row.design_note || "", cutNote: row.cut_note || ""
   };
 }
 function toRow(payload){
@@ -31,7 +34,8 @@ function toRow(payload){
     colors: payload.colors, color_names: payload.colorNames,
     silhouette: payload.silhouette, tone: payload.tone,
     image: payload.image, gallery: payload.gallery,
-    featured: payload.featured, description: payload.description, details: payload.details
+    featured: payload.featured, description: payload.description, details: payload.details,
+    fabric_note: payload.fabricNote, design_note: payload.designNote, cut_note: payload.cutNote
   };
 }
 function slugify(str){
@@ -99,6 +103,480 @@ async function loadSettings(){
   if (error){ showToast('Failed to load settings: ' + error.message); return; }
   SETTINGS = data || {};
   fillSettingsForm();
+  const freeShipInput = document.getElementById('s-freeShippingThreshold');
+  if (freeShipInput) freeShipInput.value = SETTINGS.free_shipping_threshold ?? 150;
+  fillContentForm();
+}
+
+/* ---------- Shipping rates + collection points ---------- */
+async function loadShipping(){
+  const [{ data: rates, error: rErr }, { data: points, error: pErr }] = await Promise.all([
+    sb.from('shipping_rates').select('*').order('country_name', { ascending: true }),
+    sb.from('collection_points').select('*').order('sort_order', { ascending: true })
+  ]);
+  if (rErr) showToast('Failed to load shipping rates: ' + rErr.message);
+  if (pErr) showToast('Failed to load collection points: ' + pErr.message);
+  renderRatesTable(rates || []);
+  renderPointsTable(points || []);
+}
+
+function renderRatesTable(rates){
+  const tbody = document.getElementById('rates-table');
+  if (!rates.length){
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No countries added yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rates.map(r => `
+    <tr>
+      <td>${escapeHtml(r.country_code)}</td>
+      <td>${escapeHtml(r.country_name)}</td>
+      <td>$${Number(r.rate).toFixed(2)}</td>
+      <td><button class="icon-link danger" onclick="deleteRate('${r.id}')">Delete</button></td>
+    </tr>`).join('');
+}
+
+function renderPointsTable(points){
+  const tbody = document.getElementById('points-table');
+  if (!points.length){
+    tbody.innerHTML = `<tr><td colspan="3" class="empty-state">No collection points yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = points.map(p => `
+    <tr>
+      <td>${escapeHtml(p.name)}</td>
+      <td><span class="badge ${p.active ? 'in' : 'muted'}">${p.active ? 'Active' : 'Hidden'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-link" onclick="togglePoint('${p.id}', ${!p.active})">${p.active ? 'Hide' : 'Show'}</button>
+          <button class="icon-link danger" onclick="deletePoint('${p.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+document.getElementById('add-rate-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const country_code = document.getElementById('rate-country-code').value.trim().toUpperCase();
+  const country_name = document.getElementById('rate-country-name').value.trim();
+  const rate = parseFloat(document.getElementById('rate-amount').value) || 0;
+  if (!country_code || !country_name){ showToast('Country code and name are required'); return; }
+  const { error } = await sb.from('shipping_rates').upsert({ country_code, country_name, rate }, { onConflict: 'country_code' });
+  if (error){ showToast('Save failed: ' + error.message); return; }
+  document.getElementById('add-rate-form').reset();
+  showToast('Shipping rate saved');
+  await loadShipping();
+});
+
+async function deleteRate(id){
+  if (!confirm('Remove this country\'s shipping rate?')) return;
+  const { error } = await sb.from('shipping_rates').delete().eq('id', id);
+  if (!error){ showToast('Rate removed'); await loadShipping(); }
+  else showToast('Delete failed: ' + error.message);
+}
+
+document.getElementById('add-point-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('point-name').value.trim();
+  if (!name){ return; }
+  const { error } = await sb.from('collection_points').insert({ name });
+  if (error){ showToast('Save failed: ' + error.message); return; }
+  document.getElementById('add-point-form').reset();
+  showToast('Collection point added');
+  await loadShipping();
+});
+
+async function togglePoint(id, nextActive){
+  const { error } = await sb.from('collection_points').update({ active: nextActive }).eq('id', id);
+  if (!error){ await loadShipping(); }
+  else showToast('Update failed: ' + error.message);
+}
+
+async function deletePoint(id){
+  if (!confirm('Delete this collection point?')) return;
+  const { error } = await sb.from('collection_points').delete().eq('id', id);
+  if (!error){ showToast('Collection point deleted'); await loadShipping(); }
+  else showToast('Delete failed: ' + error.message);
+}
+
+document.getElementById('free-shipping-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const free_shipping_threshold = parseFloat(document.getElementById('s-freeShippingThreshold').value) || 0;
+  const { data, error } = await sb.from('settings').update({ free_shipping_threshold }).eq('id', 1).select().single();
+  if (!error){ showToast('Threshold saved'); SETTINGS = data; }
+  else showToast('Save failed: ' + error.message);
+});
+
+/* ---------- Content (footer/social, contact, testimonials, FAQs, About page) ---------- */
+function fillContentForm(){
+  document.getElementById('c-footerTagline').value = SETTINGS.footer_tagline || 'Premium abayas and modest wear, designed in fine fabrics and finished by hand. Modest fashion, made modern.';
+  document.getElementById('c-instagram').value = SETTINGS.social_instagram || '';
+  document.getElementById('c-pinterest').value = SETTINGS.social_pinterest || '';
+  document.getElementById('c-tiktok').value = SETTINGS.social_tiktok || '';
+
+  document.getElementById('c-email').value = SETTINGS.contact_email || 'support@nuraelabaya.com';
+  document.getElementById('c-phone').value = SETTINGS.contact_phone || '+971 4 555 0148';
+  document.getElementById('c-address').value = SETTINGS.contact_address || 'Al Quoz Industrial Area, Dubai, UAE';
+  document.getElementById('c-hours').value = SETTINGS.contact_hours || 'Sun – Thu, 9am – 6pm GST';
+
+  TESTIMONIALS_ADMIN = (SETTINGS.testimonials && SETTINGS.testimonials.length)
+    ? SETTINGS.testimonials
+    : (typeof TESTIMONIALS !== 'undefined' ? TESTIMONIALS.map(t => ({ name: t.name, role: t.role, quote: t.quote })) : []);
+  renderTestimonialsTable();
+
+  FAQS_ADMIN = (SETTINGS.faqs && Object.keys(SETTINGS.faqs).length)
+    ? SETTINGS.faqs
+    : (typeof FAQS !== 'undefined' ? JSON.parse(JSON.stringify(FAQS)) : {});
+  renderFaqsTable();
+
+  const about = (SETTINGS.about_content && Object.keys(SETTINGS.about_content).length)
+    ? SETTINGS.about_content
+    : (typeof DEFAULT_ABOUT_CONTENT !== 'undefined' ? DEFAULT_ABOUT_CONTENT : {});
+  fillAboutForm(about);
+}
+
+document.getElementById('footer-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    footer_tagline: document.getElementById('c-footerTagline').value,
+    social_instagram: document.getElementById('c-instagram').value.trim(),
+    social_pinterest: document.getElementById('c-pinterest').value.trim(),
+    social_tiktok: document.getElementById('c-tiktok').value.trim()
+  };
+  const { data, error } = await sb.from('settings').update(payload).eq('id', 1).select().single();
+  if (!error){ showToast('Footer & social links saved'); SETTINGS = data; }
+  else showToast('Save failed: ' + error.message);
+});
+
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    contact_email: document.getElementById('c-email').value.trim(),
+    contact_phone: document.getElementById('c-phone').value.trim(),
+    contact_address: document.getElementById('c-address').value.trim(),
+    contact_hours: document.getElementById('c-hours').value.trim()
+  };
+  const { data, error } = await sb.from('settings').update(payload).eq('id', 1).select().single();
+  if (!error){ showToast('Contact info saved'); SETTINGS = data; }
+  else showToast('Save failed: ' + error.message);
+});
+
+/* ---- Testimonials ---- */
+function renderTestimonialsTable(){
+  const tbody = document.getElementById('testimonials-table');
+  if (!TESTIMONIALS_ADMIN.length){
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No testimonials yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = TESTIMONIALS_ADMIN.map((t, i) => `
+    <tr>
+      <td>${escapeHtml(t.name)}</td>
+      <td>${escapeHtml(t.role || '')}</td>
+      <td style="max-width:340px">${escapeHtml(t.quote)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-link" onclick="editTestimonial(${i})">Edit</button>
+          <button class="icon-link danger" onclick="deleteTestimonialRow(${i})">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function saveTestimonials(){
+  const { data, error } = await sb.from('settings').update({ testimonials: TESTIMONIALS_ADMIN }).eq('id', 1).select().single();
+  if (error){ showToast('Save failed: ' + error.message); return; }
+  SETTINGS = data;
+}
+
+document.getElementById('add-testimonial-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('t-name').value.trim();
+  const role = document.getElementById('t-role').value.trim();
+  const quote = document.getElementById('t-quote').value.trim();
+  if (!name || !quote) return;
+  const editIndex = document.getElementById('testimonial-edit-index').value;
+  if (editIndex !== ''){
+    TESTIMONIALS_ADMIN[Number(editIndex)] = { name, role, quote };
+  } else {
+    TESTIMONIALS_ADMIN.push({ name, role, quote });
+  }
+  await saveTestimonials();
+  document.getElementById('add-testimonial-form').reset();
+  document.getElementById('testimonial-edit-index').value = '';
+  document.getElementById('testimonial-submit-btn').textContent = '+ Add';
+  renderTestimonialsTable();
+  showToast('Testimonial saved');
+});
+
+function editTestimonial(i){
+  const t = TESTIMONIALS_ADMIN[i];
+  document.getElementById('t-name').value = t.name;
+  document.getElementById('t-role').value = t.role || '';
+  document.getElementById('t-quote').value = t.quote;
+  document.getElementById('testimonial-edit-index').value = i;
+  document.getElementById('testimonial-submit-btn').textContent = 'Update';
+  document.getElementById('view-content').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteTestimonialRow(i){
+  if (!confirm('Delete this testimonial?')) return;
+  TESTIMONIALS_ADMIN.splice(i, 1);
+  await saveTestimonials();
+  renderTestimonialsTable();
+  showToast('Testimonial deleted');
+}
+
+/* ---- FAQs ---- */
+function renderFaqsTable(){
+  const tbody = document.getElementById('faqs-table');
+  const rows = [];
+  Object.keys(FAQS_ADMIN).forEach(cat => {
+    (FAQS_ADMIN[cat] || []).forEach((item, i) => rows.push({ cat, i, item }));
+  });
+  if (!rows.length){
+    tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No FAQs yet.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${escapeHtml(r.cat)}</td>
+      <td style="max-width:260px">${escapeHtml(r.item.q)}</td>
+      <td style="max-width:340px">${escapeHtml(r.item.a)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-link" onclick="editFaq('${escapeHtml(r.cat)}', ${r.i})">Edit</button>
+          <button class="icon-link danger" onclick="deleteFaqRow('${escapeHtml(r.cat)}', ${r.i})">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function saveFaqs(){
+  const { data, error } = await sb.from('settings').update({ faqs: FAQS_ADMIN }).eq('id', 1).select().single();
+  if (error){ showToast('Save failed: ' + error.message); return; }
+  SETTINGS = data;
+}
+
+document.getElementById('add-faq-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const category = document.getElementById('faqf-category').value.trim();
+  const q = document.getElementById('faqf-question').value.trim();
+  const a = document.getElementById('faqf-answer').value.trim();
+  if (!category || !q || !a) return;
+
+  const editCategory = document.getElementById('faq-edit-category').value;
+  const editIndex = document.getElementById('faq-edit-index').value;
+  if (editCategory !== '' && editIndex !== ''){
+    FAQS_ADMIN[editCategory].splice(Number(editIndex), 1);
+    if (!FAQS_ADMIN[editCategory].length) delete FAQS_ADMIN[editCategory];
+  }
+  if (!FAQS_ADMIN[category]) FAQS_ADMIN[category] = [];
+  FAQS_ADMIN[category].push({ q, a });
+
+  await saveFaqs();
+  document.getElementById('add-faq-form').reset();
+  document.getElementById('faq-edit-category').value = '';
+  document.getElementById('faq-edit-index').value = '';
+  document.getElementById('faq-submit-btn').textContent = '+ Add';
+  renderFaqsTable();
+  showToast('FAQ saved');
+});
+
+function editFaq(cat, i){
+  const item = FAQS_ADMIN[cat][i];
+  document.getElementById('faqf-category').value = cat;
+  document.getElementById('faqf-question').value = item.q;
+  document.getElementById('faqf-answer').value = item.a;
+  document.getElementById('faq-edit-category').value = cat;
+  document.getElementById('faq-edit-index').value = i;
+  document.getElementById('faq-submit-btn').textContent = 'Update';
+  document.getElementById('view-content').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteFaqRow(cat, i){
+  if (!confirm('Delete this FAQ?')) return;
+  FAQS_ADMIN[cat].splice(i, 1);
+  if (!FAQS_ADMIN[cat].length) delete FAQS_ADMIN[cat];
+  await saveFaqs();
+  renderFaqsTable();
+  showToast('FAQ deleted');
+}
+
+/* ---- About page ---- */
+function aboutValueRowHtml(title, text){
+  return `<div class="form-grid value-row" style="align-items:flex-start">
+    <div class="field"><label>Card title</label><input type="text" class="v-title" value="${escapeHtml(title || '')}"></div>
+    <div class="field full"><label>Card text</label><textarea class="v-text">${escapeHtml(text || '')}</textarea></div>
+    <button type="button" class="icon-link danger" onclick="this.closest('.value-row').remove()" style="align-self:center">Remove</button>
+  </div>`;
+}
+function aboutTimelineRowHtml(year, text){
+  return `<div class="form-grid timeline-row" style="align-items:flex-start">
+    <div class="field"><label>Year</label><input type="text" class="tl-year" value="${escapeHtml(year || '')}" style="max-width:120px"></div>
+    <div class="field full"><label>Milestone text</label><input type="text" class="tl-text" value="${escapeHtml(text || '')}"></div>
+    <button type="button" class="icon-link danger" onclick="this.closest('.timeline-row').remove()" style="align-self:center">Remove</button>
+  </div>`;
+}
+
+document.getElementById('add-value-row').addEventListener('click', () => {
+  document.getElementById('about-values-rows').insertAdjacentHTML('beforeend', aboutValueRowHtml('', ''));
+});
+document.getElementById('add-timeline-row').addEventListener('click', () => {
+  document.getElementById('about-timeline-rows').insertAdjacentHTML('beforeend', aboutTimelineRowHtml('', ''));
+});
+
+function fillAboutForm(c){
+  document.getElementById('a-heroEyebrow').value = c.heroEyebrow || '';
+  document.getElementById('a-heroTitle').value = c.heroTitle || '';
+  document.getElementById('a-heroSubtitle').value = c.heroSubtitle || '';
+
+  document.getElementById('a-storyEyebrow').value = c.storyEyebrow || '';
+  document.getElementById('a-storyTitle').value = c.storyTitle || '';
+  document.getElementById('a-storyText').value = c.storyText || '';
+
+  document.getElementById('a-statYears').value = c.statYears || '';
+  document.getElementById('a-statYearsLabel').value = c.statYearsLabel || '';
+  document.getElementById('a-statCountries').value = c.statCountries || '';
+  document.getElementById('a-statCountriesLabel').value = c.statCountriesLabel || '';
+  document.getElementById('a-statCustomers').value = c.statCustomers || '';
+  document.getElementById('a-statCustomersLabel').value = c.statCustomersLabel || '';
+
+  document.getElementById('a-valuesEyebrow').value = c.valuesEyebrow || '';
+  document.getElementById('a-valuesTitle').value = c.valuesTitle || '';
+  document.getElementById('about-values-rows').innerHTML = (c.values || []).map(v => aboutValueRowHtml(v.title, v.text)).join('');
+
+  document.getElementById('a-promiseEyebrow').value = c.promiseEyebrow || '';
+  document.getElementById('a-promiseTitle').value = c.promiseTitle || '';
+  document.getElementById('a-promiseText').value = c.promiseText || '';
+
+  document.getElementById('a-timelineEyebrow').value = c.timelineEyebrow || '';
+  document.getElementById('a-timelineTitle').value = c.timelineTitle || '';
+  document.getElementById('about-timeline-rows').innerHTML = (c.timeline || []).map(t => aboutTimelineRowHtml(t.year, t.text)).join('');
+}
+
+document.getElementById('about-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const values = Array.from(document.querySelectorAll('#about-values-rows .value-row')).map(row => ({
+    title: row.querySelector('.v-title').value.trim(),
+    text: row.querySelector('.v-text').value.trim()
+  })).filter(v => v.title || v.text);
+
+  const timeline = Array.from(document.querySelectorAll('#about-timeline-rows .timeline-row')).map(row => ({
+    year: row.querySelector('.tl-year').value.trim(),
+    text: row.querySelector('.tl-text').value.trim()
+  })).filter(t => t.year || t.text);
+
+  const about_content = {
+    heroEyebrow: document.getElementById('a-heroEyebrow').value.trim(),
+    heroTitle: document.getElementById('a-heroTitle').value.trim(),
+    heroSubtitle: document.getElementById('a-heroSubtitle').value.trim(),
+    storyEyebrow: document.getElementById('a-storyEyebrow').value.trim(),
+    storyTitle: document.getElementById('a-storyTitle').value.trim(),
+    storyText: document.getElementById('a-storyText').value,
+    statYears: document.getElementById('a-statYears').value.trim(),
+    statYearsLabel: document.getElementById('a-statYearsLabel').value.trim(),
+    statCountries: document.getElementById('a-statCountries').value.trim(),
+    statCountriesLabel: document.getElementById('a-statCountriesLabel').value.trim(),
+    statCustomers: document.getElementById('a-statCustomers').value.trim(),
+    statCustomersLabel: document.getElementById('a-statCustomersLabel').value.trim(),
+    valuesEyebrow: document.getElementById('a-valuesEyebrow').value.trim(),
+    valuesTitle: document.getElementById('a-valuesTitle').value.trim(),
+    values,
+    promiseEyebrow: document.getElementById('a-promiseEyebrow').value.trim(),
+    promiseTitle: document.getElementById('a-promiseTitle').value.trim(),
+    promiseText: document.getElementById('a-promiseText').value,
+    timelineEyebrow: document.getElementById('a-timelineEyebrow').value.trim(),
+    timelineTitle: document.getElementById('a-timelineTitle').value.trim(),
+    timeline
+  };
+
+  const { data, error } = await sb.from('settings').update({ about_content }).eq('id', 1).select().single();
+  if (!error){ showToast('About page saved'); SETTINGS = data; }
+  else showToast('Save failed: ' + error.message);
+});
+
+/* ---------- Influencers ---------- */
+async function loadInfluencers(){
+  const [{ data: influencers, error: iErr }, { data: orders, error: oErr }] = await Promise.all([
+    sb.from('influencers').select('*').order('created_at', { ascending: false }),
+    sb.from('orders').select('ref_code, subtotal, commission_amount, status')
+  ]);
+  if (iErr) showToast('Failed to load influencers: ' + iErr.message);
+  if (oErr) showToast('Failed to load orders: ' + oErr.message);
+  renderInfluencersTable(influencers || [], orders || []);
+}
+
+function renderInfluencersTable(influencers, orders){
+  const tbody = document.getElementById('influencers-table');
+  if (!influencers.length){
+    tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No influencers added yet.</td></tr>`;
+    return;
+  }
+  const link = (code) => `${window.location.origin}/shop.html?ref=${encodeURIComponent(code)}`;
+  tbody.innerHTML = influencers.map(inf => {
+    const theirOrders = orders.filter(o => (o.ref_code || '').toUpperCase() === (inf.code || '').toUpperCase());
+    const orderCount = theirOrders.length;
+    const totalSales = theirOrders.reduce((s, o) => s + (Number(o.subtotal) || 0), 0);
+    const commissionOwed = theirOrders.reduce((s, o) => s + (Number(o.commission_amount) || 0), 0);
+    const commissionLabel = inf.commission_type === 'flat'
+      ? `AED ${Number(inf.commission_value).toFixed(2)} / order`
+      : `${Number(inf.commission_value)}%`;
+    return `
+    <tr>
+      <td><strong>${escapeHtml(inf.name)}</strong><br><span style="color:var(--grey);font-size:12px">${escapeHtml(inf.code)}</span></td>
+      <td>
+        <div class="row-actions">
+          <input type="text" readonly value="${link(inf.code)}" style="width:200px;font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:6px" onclick="this.select()">
+          <button class="icon-link" onclick="copyInfluencerLink('${escapeHtml(inf.code)}')">Copy</button>
+        </div>
+      </td>
+      <td>${commissionLabel}</td>
+      <td>${orderCount}</td>
+      <td>AED ${totalSales.toFixed(2)}</td>
+      <td><strong>AED ${commissionOwed.toFixed(2)}</strong></td>
+      <td><span class="badge ${inf.active ? 'in' : 'muted'}">${inf.active ? 'Active' : 'Paused'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-link" onclick="toggleInfluencer('${inf.id}', ${!inf.active})">${inf.active ? 'Pause' : 'Activate'}</button>
+          <button class="icon-link danger" onclick="deleteInfluencer('${inf.id}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function copyInfluencerLink(code){
+  const link = `${window.location.origin}/shop.html?ref=${encodeURIComponent(code)}`;
+  navigator.clipboard.writeText(link).then(
+    () => showToast('Referral link copied'),
+    () => showToast('Could not copy — select and copy the link manually')
+  );
+}
+
+document.getElementById('add-influencer-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('inf-name').value.trim();
+  const code = document.getElementById('inf-code').value.trim().toUpperCase();
+  const commission_type = document.getElementById('inf-type').value;
+  const commission_value = parseFloat(document.getElementById('inf-value').value) || 0;
+  if (!name || !code){ showToast('Name and referral code are required'); return; }
+  const { error } = await sb.from('influencers').upsert({ name, code, commission_type, commission_value, active: true }, { onConflict: 'code' });
+  if (error){ showToast('Save failed: ' + error.message); return; }
+  document.getElementById('add-influencer-form').reset();
+  showToast('Influencer added');
+  await loadInfluencers();
+});
+
+async function toggleInfluencer(id, nextActive){
+  const { error } = await sb.from('influencers').update({ active: nextActive }).eq('id', id);
+  if (!error){ await loadInfluencers(); }
+  else showToast('Update failed: ' + error.message);
+}
+
+async function deleteInfluencer(id){
+  if (!confirm('Delete this influencer? Their past orders will stay on record, but the referral link will stop working.')) return;
+  const { error } = await sb.from('influencers').delete().eq('id', id);
+  if (!error){ showToast('Influencer deleted'); await loadInfluencers(); }
+  else showToast('Delete failed: ' + error.message);
 }
 
 /* ---------- Dashboard ---------- */
@@ -234,6 +712,9 @@ function resetProductForm(){
   renderGalleryPreview();
   document.getElementById('delete-product-btn').style.display = 'none';
   document.getElementById('f-oldPrice').value = '';
+  document.getElementById('f-fabricNote').value = '';
+  document.getElementById('f-designNote').value = '';
+  document.getElementById('f-cutNote').value = '';
 }
 
 function editProduct(id){
@@ -253,6 +734,9 @@ function editProduct(id){
   document.getElementById('f-reviews').value = p.reviews ?? 0;
   document.getElementById('f-featured').checked = !!p.featured;
   document.getElementById('f-description').value = p.description || '';
+  document.getElementById('f-fabricNote').value = p.fabricNote || '';
+  document.getElementById('f-designNote').value = p.designNote || '';
+  document.getElementById('f-cutNote').value = p.cutNote || '';
 
   document.getElementById('details-list').innerHTML = '';
   (p.details && p.details.length ? p.details : ['']).forEach(d => addDetailRow(d));
@@ -290,6 +774,9 @@ function collectProductPayload(){
     reviews: parseInt(document.getElementById('f-reviews').value, 10) || 0,
     featured: document.getElementById('f-featured').checked,
     description: document.getElementById('f-description').value.trim(),
+    fabricNote: document.getElementById('f-fabricNote').value.trim(),
+    designNote: document.getElementById('f-designNote').value.trim(),
+    cutNote: document.getElementById('f-cutNote').value.trim(),
     details, colors, colorNames,
     image: mainImageUrl,
     gallery: galleryUrls
@@ -339,7 +826,20 @@ function fillSettingsForm(){
   document.getElementById('s-heroSubtitle').value = SETTINGS.hero_subtitle || '';
   document.getElementById('s-announcementText').value = SETTINGS.announcement_text || '';
   document.getElementById('hero-image-preview').innerHTML = SETTINGS.hero_image ? `<img src="${SETTINGS.hero_image}">` : 'No image';
+  document.getElementById('logo-image-preview').innerHTML = SETTINGS.logo_image ? `<img src="${SETTINGS.logo_image}">` : 'No image';
 }
+
+let logoImageUrl = null;
+document.getElementById('logo-image-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try{
+    showToast('Uploading logo...');
+    logoImageUrl = await uploadImage(file);
+    document.getElementById('logo-image-preview').innerHTML = `<img src="${logoImageUrl}">`;
+    showToast('Logo uploaded');
+  } catch(err){ showToast(err.message); }
+});
 
 let heroImageUrl = null;
 document.getElementById('hero-image-input').addEventListener('change', async (e) => {
@@ -362,6 +862,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e) =>
     announcement_text: document.getElementById('s-announcementText').value
   };
   if (heroImageUrl) payload.hero_image = heroImageUrl;
+  if (logoImageUrl) payload.logo_image = logoImageUrl;
   const { data, error } = await sb.from('settings').update(payload).eq('id', 1).select().single();
   if (!error){ showToast('Settings saved'); SETTINGS = data; }
   else showToast('Save failed: ' + error.message);
@@ -381,5 +882,5 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
   const session = await checkAuth();
   if (!session) return;
   resetProductForm();
-  await Promise.all([loadProducts(), loadSettings()]);
+  await Promise.all([loadProducts(), loadSettings(), loadShipping(), loadInfluencers()]);
 })();

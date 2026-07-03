@@ -15,6 +15,9 @@
       <a href="#products" data-view="products" class="nav-link">Products</a>
       <a href="#product-form" data-view="product-form" class="nav-link" id="nav-add-product">Add Product</a>
       <a href="#settings" data-view="settings" class="nav-link">Site Settings</a>
+      <a href="#content" data-view="content" class="nav-link">Content</a>
+      <a href="#shipping" data-view="shipping" class="nav-link">Shipping</a>
+      <a href="#influencers" data-view="influencers" class="nav-link">Influencers</a>
       <a href="#account" data-view="account" class="nav-link">Account</a>
       <a href="../index.html" target="_blank">View Storefront ↗</a>
       <button id="logout-btn" style="margin-top:auto">Log Out</button>
@@ -115,6 +118,19 @@
             </div>
 
             <div class="field full">
+              <label>Fabric (shown in the "Fabric" accordion)</label>
+              <textarea id="f-fabricNote" placeholder="e.g. Nova Crepe is a lightweight fabric with a clean texture..."></textarea>
+            </div>
+            <div class="field full">
+              <label>Design (shown in the "Design" accordion)</label>
+              <textarea id="f-designNote" placeholder="e.g. Embroidered Design: intricate embroidery that adds elegance..."></textarea>
+            </div>
+            <div class="field full">
+              <label>Cut (shown in the "Cut" accordion)</label>
+              <textarea id="f-cutNote" placeholder="e.g. Klosh: extended shape widening from the waist..."></textarea>
+            </div>
+
+            <div class="field full">
               <label>Details / Specs (one per line)</label>
               <div class="detail-list" id="details-list"></div>
               <button type="button" class="icon-link" id="add-detail-row" style="margin-top:8px">+ Add detail line</button>
@@ -160,6 +176,14 @@
         <form id="settings-form">
           <div class="form-grid">
             <div class="field full">
+              <label>Site Logo</label>
+              <div class="img-upload">
+                <div class="img-preview" id="logo-image-preview">No image</div>
+                <input type="file" id="logo-image-input" accept="image/*">
+              </div>
+              <p style="font-size:12px;color:#888;margin-top:6px">Upload a logo image (PNG with transparent background recommended) to replace the "N Nurael" text logo in the header and footer. Leave empty to keep the text logo.</p>
+            </div>
+            <div class="field full">
               <label>Homepage Cover Image</label>
               <div class="img-upload">
                 <div class="img-preview" id="hero-image-preview">No image</div>
@@ -175,6 +199,197 @@
             <button type="submit" class="btn" style="width:auto;padding:12px 28px">Save Settings</button>
           </div>
         </form>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="view" id="view-content">
+      <div class="page-head">
+        <div><h1>Content</h1><p>Edit the footer, social links, contact info, testimonials, FAQs, and the About page — all without touching code.</p></div>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">Footer &amp; social links</h3>
+        <form id="footer-form">
+          <div class="form-grid">
+            <div class="field full"><label>Footer tagline</label><textarea id="c-footerTagline" placeholder="Premium abayas and modest wear, designed in fine fabrics..."></textarea></div>
+            <div class="field"><label>Instagram URL</label><input type="url" id="c-instagram" placeholder="https://instagram.com/yourbrand"></div>
+            <div class="field"><label>Pinterest URL</label><input type="url" id="c-pinterest" placeholder="https://pinterest.com/yourbrand"></div>
+            <div class="field"><label>TikTok URL</label><input type="url" id="c-tiktok" placeholder="https://tiktok.com/@yourbrand"></div>
+          </div>
+          <div class="form-actions"><button type="submit" class="btn" style="width:auto;padding:12px 28px">Save Footer &amp; Social</button></div>
+        </form>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">Contact info</h3>
+        <form id="contact-form">
+          <div class="form-grid">
+            <div class="field"><label>Support email</label><input type="email" id="c-email"></div>
+            <div class="field"><label>Phone</label><input type="text" id="c-phone"></div>
+            <div class="field"><label>Studio / address</label><input type="text" id="c-address"></div>
+            <div class="field"><label>Support hours</label><input type="text" id="c-hours"></div>
+          </div>
+          <div class="form-actions"><button type="submit" class="btn" style="width:auto;padding:12px 28px">Save Contact Info</button></div>
+        </form>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">Testimonials (shown on homepage)</h3>
+        <form id="add-testimonial-form" style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+          <input type="hidden" id="testimonial-edit-index" value="">
+          <input type="text" id="t-name" placeholder="Customer name" style="width:160px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <input type="text" id="t-role" placeholder="Role e.g. Verified Buyer" style="width:160px;padding:10px 13px;border:1px solid var(--line);border-radius:8px">
+          <input type="text" id="t-quote" placeholder="Quote" style="flex:1;min-width:220px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <button type="submit" class="btn btn-sm" id="testimonial-submit-btn">+ Add</button>
+        </form>
+        <table>
+          <thead><tr><th>Name</th><th>Role</th><th>Quote</th><th></th></tr></thead>
+          <tbody id="testimonials-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">FAQs</h3>
+        <form id="add-faq-form" style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+          <input type="hidden" id="faq-edit-category" value="">
+          <input type="hidden" id="faq-edit-index" value="">
+          <input type="text" id="faqf-category" placeholder="Category e.g. Orders" style="width:150px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <input type="text" id="faqf-question" placeholder="Question" style="flex:1;min-width:200px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <textarea id="faqf-answer" placeholder="Answer" style="flex:1;min-width:220px;padding:10px 13px;border:1px solid var(--line);border-radius:8px;min-height:42px" required></textarea>
+          <button type="submit" class="btn btn-sm" id="faq-submit-btn">+ Add</button>
+        </form>
+        <table>
+          <thead><tr><th>Category</th><th>Question</th><th>Answer</th><th></th></tr></thead>
+          <tbody id="faqs-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:26px">
+        <h3 style="margin-bottom:6px">About page</h3>
+        <p style="font-size:13px;color:#888;margin-bottom:18px">This fills in every section of your About page — hero text, the story, the "what we stand for" cards, the promise section, and the milestones timeline.</p>
+        <form id="about-form">
+          <h4 style="margin:18px 0 10px">Hero</h4>
+          <div class="form-grid">
+            <div class="field"><label>Eyebrow</label><input type="text" id="a-heroEyebrow"></div>
+            <div class="field full"><label>Title</label><input type="text" id="a-heroTitle"></div>
+            <div class="field full"><label>Subtitle</label><textarea id="a-heroSubtitle"></textarea></div>
+          </div>
+
+          <h4 style="margin:18px 0 10px">Our story</h4>
+          <div class="form-grid">
+            <div class="field"><label>Eyebrow</label><input type="text" id="a-storyEyebrow"></div>
+            <div class="field full"><label>Title</label><input type="text" id="a-storyTitle"></div>
+            <div class="field full"><label>Story text (leave a blank line between paragraphs)</label><textarea id="a-storyText" style="min-height:110px"></textarea></div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>Stat 1 value</label><input type="text" id="a-statYears" placeholder="7+"></div>
+            <div class="field"><label>Stat 1 label</label><input type="text" id="a-statYearsLabel" placeholder="Years Crafting"></div>
+            <div class="field"><label>Stat 2 value</label><input type="text" id="a-statCountries" placeholder="40+"></div>
+            <div class="field"><label>Stat 2 label</label><input type="text" id="a-statCountriesLabel" placeholder="Countries Shipped"></div>
+            <div class="field"><label>Stat 3 value</label><input type="text" id="a-statCustomers" placeholder="12k+"></div>
+            <div class="field"><label>Stat 3 label</label><input type="text" id="a-statCustomersLabel" placeholder="Happy Customers"></div>
+          </div>
+
+          <h4 style="margin:18px 0 10px">What we stand for</h4>
+          <div class="form-grid">
+            <div class="field"><label>Eyebrow</label><input type="text" id="a-valuesEyebrow"></div>
+            <div class="field full"><label>Title</label><input type="text" id="a-valuesTitle"></div>
+          </div>
+          <div id="about-values-rows"></div>
+          <button type="button" class="icon-link" id="add-value-row" style="margin-bottom:18px">+ Add value card</button>
+
+          <h4 style="margin:18px 0 10px">Our promise</h4>
+          <div class="form-grid">
+            <div class="field"><label>Eyebrow</label><input type="text" id="a-promiseEyebrow"></div>
+            <div class="field full"><label>Title</label><input type="text" id="a-promiseTitle"></div>
+            <div class="field full"><label>Promise text (leave a blank line between paragraphs)</label><textarea id="a-promiseText" style="min-height:90px"></textarea></div>
+          </div>
+
+          <h4 style="margin:18px 0 10px">Milestones</h4>
+          <div class="form-grid">
+            <div class="field"><label>Eyebrow</label><input type="text" id="a-timelineEyebrow"></div>
+            <div class="field full"><label>Title</label><input type="text" id="a-timelineTitle"></div>
+          </div>
+          <div id="about-timeline-rows"></div>
+          <button type="button" class="icon-link" id="add-timeline-row" style="margin-bottom:18px">+ Add milestone</button>
+
+          <div class="form-actions"><button type="submit" class="btn" style="width:auto;padding:12px 28px">Save About Page</button></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- SHIPPING -->
+    <section class="view" id="view-shipping">
+      <div class="page-head">
+        <div><h1>Shipping</h1><p>Per-country delivery rates and free collection points.</p></div>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <form id="free-shipping-form">
+          <div class="form-grid">
+            <div class="field"><label>Free shipping threshold ($)</label><input type="number" step="0.01" id="s-freeShippingThreshold" value="150"></div>
+          </div>
+          <div class="form-actions"><button type="submit" class="btn" style="width:auto;padding:12px 28px">Save Threshold</button></div>
+        </form>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">Country shipping rates</h3>
+        <form id="add-rate-form" style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+          <input type="text" id="rate-country-code" placeholder="Country code e.g. US" style="width:140px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" maxlength="2" required>
+          <input type="text" id="rate-country-name" placeholder="Country name e.g. United States" style="flex:1;min-width:200px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <input type="number" step="0.01" id="rate-amount" placeholder="Rate ($)" style="width:120px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <button type="submit" class="btn btn-sm">+ Add / Update</button>
+        </form>
+        <table>
+          <thead><tr><th>Code</th><th>Country</th><th>Rate</th><th></th></tr></thead>
+          <tbody id="rates-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card" style="padding:26px">
+        <h3 style="margin-bottom:14px">Free collection points</h3>
+        <form id="add-point-form" style="display:flex;gap:10px;margin-bottom:18px">
+          <input type="text" id="point-name" placeholder="Collection point name" style="flex:1;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required>
+          <button type="submit" class="btn btn-sm">+ Add</button>
+        </form>
+        <table>
+          <thead><tr><th>Name</th><th>Active</th><th></th></tr></thead>
+          <tbody id="points-table"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- INFLUENCERS -->
+    <section class="view" id="view-influencers">
+      <div class="page-head">
+        <div><h1>Influencers</h1><p>Give an influencer a referral link. Orders placed through their link are tracked here with the commission owed.</p></div>
+      </div>
+
+      <div class="card" style="padding:26px;margin-bottom:20px">
+        <h3 style="margin-bottom:14px">Add influencer</h3>
+        <form id="add-influencer-form" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div class="field" style="margin:0"><label>Name</label><input type="text" id="inf-name" placeholder="e.g. Sara Al Marri" style="padding:10px 13px;border:1px solid var(--line);border-radius:8px" required></div>
+          <div class="field" style="margin:0"><label>Referral code</label><input type="text" id="inf-code" placeholder="e.g. SARA10" style="width:140px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required></div>
+          <div class="field" style="margin:0">
+            <label>Commission type</label>
+            <select id="inf-type" style="padding:10px 13px;border:1px solid var(--line);border-radius:8px">
+              <option value="percent">% of order</option>
+              <option value="flat">Flat AED per order</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0"><label>Value</label><input type="number" step="0.01" id="inf-value" placeholder="e.g. 10" style="width:110px;padding:10px 13px;border:1px solid var(--line);border-radius:8px" required></div>
+          <button type="submit" class="btn btn-sm">+ Add Influencer</button>
+        </form>
+      </div>
+
+      <div class="card" style="padding:26px">
+        <h3 style="margin-bottom:14px">All influencers</h3>
+        <table>
+          <thead><tr><th>Name</th><th>Referral link</th><th>Commission</th><th>Orders</th><th>Total sales</th><th>Commission owed</th><th>Status</th><th></th></tr></thead>
+          <tbody id="influencers-table"></tbody>
+        </table>
       </div>
     </section>
 
@@ -196,6 +411,7 @@
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../config.js"></script>
+<script src="../data.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>
